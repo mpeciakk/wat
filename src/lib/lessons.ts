@@ -24,7 +24,16 @@ const blocks: { [key: string]: LessonBlock } = {
   "7": { from: [19, 25], to: [21, 0] },
 };
 
-export async function getLessons(id: string): Promise<Lesson[]> {
+export type Filter = {
+  key: keyof Lesson;
+  value: string;
+  inverted: boolean;
+};
+
+export async function getLessons(
+  id: string,
+  filters: Filter[]
+): Promise<Lesson[]> {
   const URL = `https://planzajec.wcy.wat.edu.pl/pl/rozklad?date=1727647200&grupa_id=${id}`;
 
   try {
@@ -47,20 +56,45 @@ export async function getLessons(id: string): Promise<Lesson[]> {
         .replace("block", "");
       const block = blocks[blockId];
       const name = $(element).find("span.name").text();
-      const info = $(element).find("span.info").text().trim().split(" - ");
+      const info = $(element).find("span.info").text().trim().split("-");
 
       const lessonName = info[0].trim();
       const lessonType = info[1].trim().replace("(", "").replace(")", "");
       const teacher = info.length > 2 ? info[2] : "";
 
-      lessons.push({
+      const lesson: Lesson = {
         name: lessonName,
         type: lessonType,
         teacher,
         date,
         block,
         data: name,
-      });
+      };
+
+      let pass = true;
+      for (const filter of filters) {
+        if (filter.inverted) {
+          if (
+            lesson[filter.key].toString().toLowerCase() ==
+            filter.value.toLowerCase()
+          ) {
+            pass = false;
+            break;
+          }
+        } else {
+          if (
+            lesson[filter.key].toString().toLowerCase() !=
+            filter.value.toLowerCase()
+          ) {
+            pass = false;
+            break;
+          }
+        }
+      }
+
+      if (pass) {
+        lessons.push(lesson);
+      }
     });
 
     return lessons;

@@ -1,13 +1,24 @@
 import { getCalendar } from "@/lib/calendar";
-import { getLessons } from "@/lib/lessons";
+import { Filter, getLessons, Lesson } from "@/lib/lessons";
+import { NextRequest } from "next/server";
 
 export const revalidate = 0;
 
 export async function GET(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   const id = params.id;
+  const searchParams = request.nextUrl.searchParams;
 
-  return new Response(getCalendar(await getLessons(id)).toString());
+  const filters: Filter[] = [];
+  searchParams.forEach((value, key) => {
+    filters.push({
+      key: key.replace("!", "") as keyof Lesson,
+      value: value,
+      inverted: key.endsWith("!"),
+    });
+  });
+
+  return new Response(getCalendar(await getLessons(id, filters)).toString());
 }

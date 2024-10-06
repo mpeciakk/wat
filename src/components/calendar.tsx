@@ -10,9 +10,10 @@ import iCalendarPlugin from "@fullcalendar/icalendar";
 
 type CalendarProps = {
   id: string;
+  params: Record<string, string>
 };
 
-export default function Calendar({ id }: CalendarProps) {
+export default function Calendar({ id, params }: CalendarProps) {
   return (
     <div className="h-screen">
       <FullCalendar
@@ -34,7 +35,7 @@ export default function Calendar({ id }: CalendarProps) {
           right: "dayGridMonth,timeGridWeek,timeGridDay,listWeek",
         }}
         events={{
-          url: `/api/calendar/${id}`,
+          url: `/api/calendar/${id}?${new URLSearchParams(params).toString()}`,
           format: "ics",
         }}
         locale="pl"
