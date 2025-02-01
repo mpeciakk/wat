@@ -28,4 +28,4 @@ jobs:
       with:
         context: .
         push: true
-        tags: ${{ env.REGISTRY_PATH }}/${{ github.event.repository.name }}:${{ github.ref_name }}
+        tags: ${{ env.REGISTRY_URL }}/${{ env.REGISTRY_PATH }}/${{ github.event.repository.name }}:${{ github.ref_name }}
