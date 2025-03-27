@@ -1,6 +1,6 @@
 services:
   app:
-    image: harbor.peciak.xyz/mpeciak/wat:main
+    image: registry.peciak.xyz/mpeciak/wat:main
     ports:
       - "3000:3000"
     environment:
