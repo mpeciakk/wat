@@ -5,7 +5,7 @@ on:
     branches: ["main"]
 
 env:
-  REGISTRY_URL: harbor.peciak.xyz
+  REGISTRY_URL: registry.peciak.xyz
   REGISTRY_PATH: mpeciak
 
 jobs:

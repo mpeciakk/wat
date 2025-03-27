@@ -1,5 +1,5 @@
 import ical from "ical-generator";
-import { Lesson } from "./lessons";
+import { Lesson } from "./scrapper";
 
 export function getCalendar(lessons: Lesson[]) {
   const cal = ical({

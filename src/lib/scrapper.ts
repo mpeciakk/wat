@@ -1,4 +1,5 @@
 import * as cheerio from "cheerio";
+import fs from "fs";
 
 export type LessonBlock = {
   from: [number, number];
@@ -30,10 +31,9 @@ export type Filter = {
   inverted: boolean;
 };
 
-export async function getLessons(
-  id: string,
-  filters: Filter[]
-): Promise<Lesson[]> {
+const CACHE_DIR = "./cache";
+
+async function fetchLessons(id: string) {
   const URL = `https://planzajec.wcy.wat.edu.pl/pl/rozklad?date=1727647200&grupa_id=${id}`;
 
   try {
@@ -71,30 +71,7 @@ export async function getLessons(
         data: name,
       };
 
-      let pass = true;
-      for (const filter of filters) {
-        if (filter.inverted) {
-          if (
-            lesson[filter.key].toString().toLowerCase() ==
-            filter.value.toLowerCase()
-          ) {
-            pass = false;
-            break;
-          }
-        } else {
-          if (
-            lesson[filter.key].toString().toLowerCase() !=
-            filter.value.toLowerCase()
-          ) {
-            pass = false;
-            break;
-          }
-        }
-      }
-
-      if (pass) {
-        lessons.push(lesson);
-      }
+      lessons.push(lesson);
     });
 
     return lessons;
@@ -102,4 +79,49 @@ export async function getLessons(
     console.error("Error fetching lessons:", error);
     return [];
   }
+}
+
+async function getCachedLessons(id: string) {
+  return JSON.parse(fs.readFileSync(`${CACHE_DIR}/${id}.json`, "utf8"));
+}
+
+async function updateCache(id: string, lessons: Lesson[]) {
+  if (!fs.existsSync(CACHE_DIR)) {
+    fs.mkdirSync(CACHE_DIR, { recursive: true });
+  }
+
+  fs.writeFileSync(`${CACHE_DIR}/${id}.json`, JSON.stringify(lessons, null, 2));
+}
+
+function filterLessons(lessons: Lesson[], filters: Filter[]) {
+  return lessons.filter((lesson) => {
+    for (const filter of filters) {
+      const lessonValue = lesson[filter.key].toString().toLowerCase();
+      const filterValue = filter.value.toLowerCase();
+
+      if (filter.inverted) {
+        if (lessonValue === filterValue) {
+          return false;
+        }
+      } else {
+        if (lessonValue !== filterValue) {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  });
+}
+
+export async function getLessons(id: string, filters: Filter[]) {
+  let lessons = await fetchLessons(id);
+
+  if (!lessons.length) {
+    lessons = await getCachedLessons(id);
+  } else {
+    updateCache(id, lessons);
+  }
+
+  return filterLessons(lessons, filters);
 }

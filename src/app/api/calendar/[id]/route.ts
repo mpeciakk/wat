@@ -1,5 +1,5 @@
 import { getCalendar } from "@/lib/calendar";
-import { Filter, getLessons, Lesson } from "@/lib/lessons";
+import { Filter, getLessons, Lesson } from "@/lib/scrapper";
 import { NextRequest } from "next/server";
 
 export const revalidate = 0;
