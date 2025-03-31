@@ -34,7 +34,7 @@ export type Filter = {
 const CACHE_DIR = "./cache";
 
 async function fetchLessons(id: string) {
-  const URL = `https://planzajec.wcy.wat.edu.pl/pl/rozklad?date=1727647200&grupa_id=${id}`;
+  const URL = `https://planzajec.wcy.wat.edu.pl/pl/rozklad?date=1740351600&grupa_id=${id}`;
 
   try {
     const response = await fetch(URL, {
