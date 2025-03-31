@@ -29,3 +29,11 @@ jobs:
         context: .
         push: true
         tags: ${{ env.REGISTRY_URL }}/${{ env.REGISTRY_PATH }}/${{ github.event.repository.name }}:${{ github.ref_name }}
+
+     - id: deploy
+        name: Deploy to seelf
+        uses: YuukanOO/seelf-deploy-action@v1
+        with:
+          host: ${{ secrets.SEELF_HOST }}
+          token: ${{ secrets.SEELF_TOKEN }}
+          appid: ${{ secrets.SEELF_APPID }}
