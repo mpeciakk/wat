@@ -33,7 +33,7 @@ export function getCalendar(lessons: Lesson[]) {
       start: start,
       end: end,
       summary: lesson.name,
-      description: `${lesson.type}\n${lesson.teacher}\n\n${lesson.data}\n\n${lesson.date[0]}-${lesson.date[1]}-${lesson.date[2]}\n\n${parseInt(lesson.date[1]) - 1}\n\n${start}`,
+      description: `${lesson.type}\n${lesson.teacher}\n\n${lesson.data}`,
     });
   });
 
