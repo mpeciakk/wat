@@ -7,5 +7,5 @@ services:
       - NODE_ENV=production
     command: node server.js
     labels:
-      - "traefik.http.routers.service.rule=Host(`wat.peciak.xyz`)"
-      - "traefik.http.routers.service.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.wat.rule=Host(`wat.peciak.xyz`)"
+      - "traefik.http.routers.wat.tls.certresolver=letsencrypt"
