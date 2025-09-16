@@ -1,8 +1,11 @@
 services:
   app:
-    image: registry.peciak.xyz/mpeciak/wat:main
-    pull_policy: always
+    build: .
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=production
+    command: node server.js
+    labels:
+      - "traefik.http.routers.service.rule=Host(`wat.peciak.xyz`)"
+      - "traefik.http.routers.service.tls.certresolver=letsencrypt"

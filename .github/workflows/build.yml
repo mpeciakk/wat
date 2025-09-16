@@ -1,39 +1,17 @@
-name: Build and push Docker image to registry
+name: Docker build & push image
 
-on:
-  push:
-    branches: ["main"]
-
-env:
-  REGISTRY_URL: registry.peciak.xyz
-  REGISTRY_PATH: mpeciak
+on: [push]
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Check out the repo
-      uses: actions/checkout@v4
-
-    - name: Login to registry
-      uses: docker/login-action@v3
-      with:
-        registry: ${{ env.REGISTRY_URL }}
-        username: ${{ secrets.REGISTRY_USERNAME }}
-        password: ${{ secrets.REGISTRY_PASSWORD }}
-
-    - name: Build and push to registry
-      uses: docker/build-push-action@v5
-      with:
-        context: .
-        push: true
-        tags: ${{ env.REGISTRY_URL }}/${{ env.REGISTRY_PATH }}/${{ github.event.repository.name }}:${{ github.ref_name }}
-
-    - id: deploy
-      name: Deploy to seelf
-      uses: YuukanOO/seelf-deploy-action@v1
-      with:
-        host: ${{ secrets.SEELF_HOST }}
-        token: ${{ secrets.SEELF_TOKEN }}
-        appid: ${{ secrets.SEELF_APPID }}
+      - id: deploy
+        name: Deploy to seelf
+        uses: YuukanOO/seelf-deploy-action@v1
+        with:
+          host: ${{ secrets.SEELF_URL }}
+          token: ${{ secrets.SEELF_TOKEN }}
+          appid: ${{ secrets.SEELF_APPID }}
+      - name: Output URL
+        run: echo "Check it out at ${{ steps.deploy.outputs.url }}"
